@@ -1,0 +1,18 @@
+SocketBBS License [SBL]
+
+Copyright (c) 2019 - Brandon Colby
+
+The use of this media or work for any purpose is permitted under this license, subject to the following rules:
+
+I.   The new media or work must not intentionally obfuscate its function.
+
+II.  The new media or work must not falsely claim to be
+     another author's work.
+
+III. The new media or work must contain this notice in any
+     notices of licenses.
+
+IV.  The new media or work must not claim to be the same as
+     the original, unmodified work.
+     
+V.  All modifications must be documented and made publically available.
