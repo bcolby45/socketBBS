@@ -171,7 +171,7 @@ ws.on('connection', function connection(ws, req) {
                 return;
             }
             if (post.length < 35) {
-                alertStr = 'Your post was mathematically determined to be too fucking stupid. Please try again.';
+                alertStr = 'Your post is too short. Please try again.';
                 wsAlert(clientIP, alertStr);
                 return;
             }
