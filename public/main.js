@@ -89,8 +89,7 @@ const cmd = {
                 container.setAttribute('onClick', `cmd.getMessages(0, this.getAttribute('id'))`);
                 threadListElement.appendChild(container);
                 let titleElement = container.querySelector('.post-title');
-                titleElement.innerHTML = snap[i].nick;
-                titleElement.innerHTML = titleElement.innerHTML.replace(/(?:<audio>)/gi, '');
+                titleElement.textContent = snap[i].nick;
                 let messageElement = container.querySelector('.post-text');
                 container.querySelector('.post-title').textContent = container.querySelector('.post-title').textContent.replace(/<[^>]*>/g, '');
                 messageElement.textContent = snap[i].message;
