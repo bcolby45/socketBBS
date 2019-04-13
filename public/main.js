@@ -202,7 +202,7 @@ let clearInput2 = () => {
 //lines for initialization
 let init = () => {
     retries = retries + 1;
-    socket = new WebSocket(`wss://${location.host}`);
+    socket = new WebSocket(`ws://${location.host}`);
     // Log errors to the console for debugging.
     socket.onerror = function (error) {
         console.log(error);

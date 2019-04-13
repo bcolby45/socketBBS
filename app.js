@@ -16,7 +16,7 @@ webServer.listen(80, function listening() {
 });
 //name variables
 let collection, collection2, database, throttledUsers, throttledUsers2, cloudflare;
-cloudflare = true;
+cloudflare = false;
 throttledUsers = new Set();
 throttledUsers2 = new Set();
 // mongo
