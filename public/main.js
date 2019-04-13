@@ -61,10 +61,12 @@ const cmd = {
                 let titleElement = container.querySelector('.message-title');
                 titleElement.innerHTML = snap[i].nick;
                 titleElement.innerHTML = titleElement.innerHTML.replace(/(?:<audio>)/gi, '');
+				titleElement.innerHTML = titleElement.innerHTML.replace(/(?:onerror)/gi, '');
                 let messageElement = container.querySelector('.message-text');
                 messageElement.innerHTML = snap[i].message;
                 messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
                 messageElement.innerHTML = messageElement.innerHTML.replace(/(?:<audio>)/gi, '');
+				messageElement.innerHTML = messageElement.innerHTML.replace(/(?:onerror)/gi, '');
             }
         }
     },
