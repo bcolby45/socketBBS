@@ -43,8 +43,6 @@ const cmd = {
         if (thread == "0") {
             return;
         }
-        console.log('domMessages');
-        console.log(snap);
         messageListElement.innerHTML = "";
         threadListElement.innerHTML = "";
         document.getElementById('messageBtn').classList.remove('hidden');
@@ -61,7 +59,6 @@ const cmd = {
             msgKey = document.getElementById(snap[i]._id);
             if (!msgKey && snap[i].board === "0" && i > -1) {
                 let container = document.createElement('div');
-                console.log('inserting into dom');
                 console.log(snap[i]);
                 container.innerHTML = MESSAGE_TEMPLATE;
                 container.setAttribute('id', snap[i]._id);
@@ -80,8 +77,6 @@ const cmd = {
         if (thread !== "0") {
             thread = "0";
         }
-        console.log('domThreads');
-        console.log(snap);
         threadListElement.innerHTML = "";
         messageListElement.innerHTML = "";
         document.getElementById('threadBtn').classList.remove('hidden');
@@ -120,12 +115,9 @@ const cmd = {
         socket.send([`getThreads`, board]);
     },
     getMessages: (board, threadID) => {
-        console.log(`getMessages, ${board}, ${threadID}`);
         socket.send([`getMessages`, board, threadID]);
     },
     displayThreads: (msg) => {
-        console.log('displayThreads');
-        console.log(msg);
         thread = "0";
         document.getElementById('return').innerHTML = `Refresh`;
         threads = msg;
@@ -171,8 +163,6 @@ let emitPost = (board, thread) => {
     }
     const message = document.getElementById('messageVal').value;
     const nick = document.getElementById('messageName').value;
-    console.log(emitPost);
-    console.log(board, thread, nick, message);
     socket.send(['submitMessage', board, thread, nick, message]);
     clearInput2();
     scrollDown();
@@ -216,7 +206,6 @@ let init = () => {
     };
     socket.onmessage = function (message) {
         let parsedData = JSON.parse(message.data);
-        console.log(parsedData);
         let exec, arg;
         if (parsedData.alert) {
             alert(parsedData.alert);
@@ -235,7 +224,7 @@ let init = () => {
             }
         }
         else {
-            console.log(`Woops! ${parsedData}`);
+            console.log(`Error! ${parsedData}`);
         }
     };
     socket.onopen = function () {

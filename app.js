@@ -161,15 +161,11 @@ ws.on('connection', function connection(ws, req) {
                 }
             }
             post = postArr.join();
-            if (post.match(/<script[\s\S]*?>[\s\S]*?<\/script>/gi)) {
-                return;
-            }
+            if (post.match(/<script[\s\S]*?>[\s\S]*?<\/script>/gi)) {return;}
             if (post.match(/(?:onerror)/gi)) {
                 return;
             }
-            if (post.length > 450) {
-                return;
-            }
+            if (post.length > 450) {return;}
             if (post.length < 35) {
                 alertStr = 'Your post is too short. Please try again.';
                 wsAlert(clientIP, alertStr);
@@ -270,12 +266,8 @@ ws.on('connection', function connection(ws, req) {
             });
         },
         submitMessage: (clientIP, boardNum, threadID, nick, post, realIP) => {
-            if (ws.readyState !== 1) {
-                return;
-            }
-            if (boardNum == 0) {
-                return;
-            }
+            if (ws.readyState !== 1) {return;}
+            if (boardNum == 0) {boardNum = 0}
             let alertStr, username, messageObj, postID, pic;
             let dateNow = Date.now();
             if (!post) {
@@ -333,12 +325,8 @@ ws.on('connection', function connection(ws, req) {
             }
         },
         submitThread: (clientIP, boardNum, nick, message, realIP) => {
-            if (ws.readyState !== 1) {
-                return;
-            }
-            if (boardNum !== 0) {
-                return;
-            }
+            if (ws.readyState !== 1) {return;}
+            if (boardNum !== 0) {boardNum = 0}
             if (message > 450) {
                 return;
             }
