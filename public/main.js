@@ -59,14 +59,10 @@ const cmd = {
                 container.setAttribute('id', snap[i]._id);
                 messageListElement.appendChild(container);
                 let titleElement = container.querySelector('.message-title');
-                titleElement.innerHTML = snap[i].nick;
-                titleElement.innerHTML = titleElement.innerHTML.replace(/(?:<audio>)/gi, '');
-				titleElement.innerHTML = titleElement.innerHTML.replace(/(?:onerror)/gi, '');
+                titleElement.textContent = snap[i].nick;
                 let messageElement = container.querySelector('.message-text');
-                messageElement.innerHTML = snap[i].message;
+                messageElement.textContent = snap[i].message;
                 messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
-                messageElement.innerHTML = messageElement.innerHTML.replace(/(?:<audio>)/gi, '');
-				messageElement.innerHTML = messageElement.innerHTML.replace(/(?:onerror)/gi, '');
             }
         }
     },
@@ -97,7 +93,6 @@ const cmd = {
                 messageElement.textContent = snap[i].message;
                 messageElement.textContent = messageElement.textContent.replace(/<[^>]*>/g, '');
                 messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
-                messageElement.innerHTML = messageElement.innerHTML.replace(/(?:<audio>)/gi, '');
             }
         }
     },
