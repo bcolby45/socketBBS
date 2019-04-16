@@ -46,7 +46,7 @@ process.on('uncaughtException', function (err) {
 const clients = new Map();
 ws.on('connection', function connection(ws, req) {
     // get, store and verify client IP
-    let clientIP = makeid();
+    let ID = makeid();
     let realIP;
     cloudflare ? realIP = req.headers['cf-connecting-ip'] : realIP = req.connection.remoteAddress;
     console.log(`${realIP} just connected.`);
@@ -54,12 +54,12 @@ ws.on('connection', function connection(ws, req) {
     let currBoard = 0;
     let threadID = 0;
     // set client states
-    if (!clients.has(clientIP)) {
-        clients.set(clientIP, {
+    if (!clients.has(ID)) {
+        clients.set(ID, {
             socket: ws,
             board: currBoard,
             threadID: threadID,
-            IP: clientIP
+            ID: ID
         });
         // Update user count on client side
         wsBroadcastBoard(JSON.stringify({
@@ -69,12 +69,12 @@ ws.on('connection', function connection(ws, req) {
     }
     else {
         // set client states
-        clients.delete(clientIP);
-        clients.set(clientIP, {
+        clients.delete(ID);
+        clients.set(ID, {
             socket: ws,
             board: currBoard,
             threadID: threadID,
-            IP: clientIP
+            ID: ID
         });
         console.log(`${realIP} disconnected.`);
         // Update user count on client side
@@ -86,7 +86,7 @@ ws.on('connection', function connection(ws, req) {
     }
     ws.on('close', function () {
         //remove client from currently connected users
-        clients.delete(clientIP);
+        clients.delete(ID);
         // Update user count on client side
         wsBroadcastBoard(JSON.stringify({
             command: 'getUsers',
@@ -101,9 +101,9 @@ ws.on('connection', function connection(ws, req) {
         //define variables
         let alertStr;
         // prevent users the server isn't aware of from connecting
-        if (!clientIP) {
+        if (!ID) {
             alertStr = 'Error.';
-            wsAlert(clientIP, alertStr);
+            wsAlert(ID, alertStr);
             return;
         }
         let msg = message.split(",");
@@ -128,7 +128,7 @@ ws.on('connection', function connection(ws, req) {
             // is this a valid command? if so, continue
             if (msg[0] in cmd && post.length > 0) {
                 let funct = cmd[msg[0]];
-                funct(clientIP, currBoard, threadID, nick, post, realIP);
+                funct(ID, currBoard, threadID, nick, post, realIP);
             }
         }
         // submit a thread
@@ -145,7 +145,7 @@ ws.on('connection', function connection(ws, req) {
             if (post.length > 450) {return;}
             if (post.length < 35) {
                 alertStr = 'Your post is too short. Please try again.';
-                wsAlert(clientIP, alertStr);
+                wsAlert(ID, alertStr);
                 return;
             }
             currBoard = msg[1];
@@ -154,24 +154,24 @@ ws.on('connection', function connection(ws, req) {
             // is this a valid command? if so, continue
             if (msg[0] in cmd && post.length > 0) {
                 let funct = cmd[msg[0]];
-                funct(clientIP, currBoard, nick, post, realIP);
+                funct(ID, currBoard, nick, post, realIP);
             }
         }
         // get and display threads
         if (msg[0] === 'getThreads') {
             let currBoard;
             currBoard = msg[1];
-            clients.set(clientIP, {
+            clients.set(ID, {
                 socket: ws,
                 board: currBoard,
                 threadID: 0,
-                IP: clientIP,
+                ID: ID,
                 upload: ``
             });
             if (currBoard > 0) {return;}
             if (msg[0] in cmd) {
                 let funct = cmd[msg[0]];
-                funct(clientIP, currBoard);
+                funct(ID, currBoard);
             }
         }
         // get and display posts within a thread
@@ -181,26 +181,26 @@ ws.on('connection', function connection(ws, req) {
             currBoard = msg[1];
             threadID = msg[2];
             //update client states
-            clients.set(clientIP, {
+            clients.set(ID, {
                 socket: ws,
                 board: currBoard,
                 threadID: threadID,
-                IP: clientIP
+                ID: ID
             });
             if (currBoard > 0) {return;}
             if (msg[0] in cmd) {
                 let funct = cmd[msg[0]];
-                funct(clientIP, currBoard, threadID);
+                funct(ID, currBoard, threadID);
             }
         }
     });
     // Server commands go here
     const cmd = {
-        getMessages: (clientIP, boardNum, threadID) => {
+        getMessages: (ID, boardNum, threadID) => {
             if (ws.readyState !== 1) {return;}
 			if (boardNum !== 0) {boardNum = 0}
-            console.log(`${boardNum}:${threadID} to ${clientIP}.`);
-            clients.get(clientIP).board = boardNum;
+            console.log(`${boardNum}:${threadID} to ${ID}.`);
+            clients.get(ID).board = boardNum;
             collection = database.collection('posts');
             collection.find({
                 board: boardNum,
@@ -208,18 +208,18 @@ ws.on('connection', function connection(ws, req) {
             }).toArray(function (err, docs) {
                 assert.equal(err, null);
                 let parsedDocs = JSON.stringify(docs);
-                console.log(`${clientIP} requested contents of ${threadID}`);
+                console.log(`${ID} requested contents of ${threadID}`);
                 ws.send(JSON.stringify({
                     command: 'displayMessages',
                     argument: docs
                 }));
             });
         },
-        getThreads: (clientIP, boardNum) => {
+        getThreads: (ID, boardNum) => {
             if (ws.readyState !== 1) {return;}
 			if (boardNum !== 0) {boardNum = 0}
-            console.log(`Board ${boardNum} to ${clientIP}.`);
-            clients.get(clientIP).board = boardNum;
+            console.log(`Board ${boardNum} to ${ID}.`);
+            clients.get(ID).board = boardNum;
             collection = database.collection('threads');
             collection.find({
                 board: boardNum
@@ -233,19 +233,19 @@ ws.on('connection', function connection(ws, req) {
                 }), boardNum);
             });
         },
-        submitMessage: (clientIP, boardNum, threadID, nick, post, realIP) => {
+        submitMessage: (ID, boardNum, threadID, nick, post, realIP) => {
             if (ws.readyState !== 1) {return;}
             if (boardNum == 0) {boardNum = 0}
             let alertStr, username, messageObj, postID, pic;
             let dateNow = Date.now();
             if (!post) {
                 alertStr = 'No message submitted.';
-                wsAlert(clientIP, alertStr);
+                wsAlert(ID, alertStr);
                 return;
             }
             else if (throttledUsers.has(realIP)) {
                 alertStr = 'You may only submit a new post every second.';
-                wsAlert(clientIP, alertStr);
+                wsAlert(ID, alertStr);
                 return;
             }
             // spam prevention
@@ -284,13 +284,13 @@ ws.on('connection', function connection(ws, req) {
                                 argument: messageObj
                             }), threadID);
                         })).then(setTimeout(function () {
-                            cmd.getThreads(clientIP, boardNum);
+                            cmd.getThreads(ID, boardNum);
                         }));
                     });
                 }
             }
         },
-        submitThread: (clientIP, boardNum, nick, message, realIP) => {
+        submitThread: (ID, boardNum, nick, message, realIP) => {
             if (ws.readyState !== 1) {return;}
             if (boardNum !== 0) {boardNum = 0}
             if (message > 450) {return;}
@@ -301,7 +301,7 @@ ws.on('connection', function connection(ws, req) {
             }
             if (throttledUsers2.has(realIP)) {
                 alertStr = 'You may only submit a new thread every five minutes.';
-                wsAlert(clientIP, alertStr);
+                wsAlert(ID, alertStr);
                 return;
             }
             throttledUsers2.add(realIP);
@@ -346,7 +346,7 @@ ws.on('connection', function connection(ws, req) {
                             });
                         }).then(function () {
                             setTimeout(function () {
-                                cmd.getThreads(clientIP, boardNum);
+                                cmd.getThreads(ID, boardNum);
                             }, 500);
                         });
                     }
@@ -381,19 +381,19 @@ let wsBroadcast = (data) => {
     });
 };
 //broadcast only to a specific user
-let wsBroadcastUser = (clientIP, data) => {
+let wsBroadcastUser = (ID, data) => {
     clients.forEach(function (client) {
         if (client.socket.readyState !== 1) {return;}
-        if (client.IP == clientIP) {
+        if (client.IP == ID) {
             client.socket.send(data);
         }
     });
 };
-let wsAlert = (clientIP, alertStr) => {
+let wsAlert = (ID, alertStr) => {
     let newAlert = JSON.stringify({
         alert: alertStr
     });
-    wsBroadcastUser(clientIP, newAlert);
+    wsBroadcastUser(ID, newAlert);
 };
 let clearThrottles = (IP) => {
     setTimeout(function () {
