@@ -229,7 +229,7 @@ ws.on('connection', function connection(ws, req) {
             collection.find({
                 board: boardNum,
                 threadID: threadID
-            }).toArray(function (err, docs) {
+            }).limit(400).toArray(function (err, docs) {
                 assert.equal(err, null);
                 let parsedDocs = JSON.stringify(docs);
                 console.log(`${ID} requested contents of ${threadID}`);
@@ -253,7 +253,7 @@ ws.on('connection', function connection(ws, req) {
                 board: boardNum
             }).sort({
                 "date": -1
-            }).toArray(function (err, docs) {
+            }).limit(400).toArray(function (err, docs) {
                 assert.equal(err, null);
                 wsBroadcastBoard(JSON.stringify({
                     command: 'displayThreads',
