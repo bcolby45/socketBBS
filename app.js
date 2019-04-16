@@ -1,5 +1,7 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 const express = require("express");
 const path = require("path");
 const http = require('http');
@@ -20,7 +22,8 @@ cloudflare = false;
 throttledUsers = new Set();
 throttledUsers2 = new Set();
 // mongo
-let mongodb = require('mongodb').MongoClient, assert = require('assert');
+let mongodb = require('mongodb').MongoClient,
+    assert = require('assert');
 // Connection URL
 const dbUrl = "mongodb://localhost/db";
 // Use connect method to connect to the server
@@ -66,8 +69,7 @@ ws.on('connection', function connection(ws, req) {
             command: 'getUsers',
             argument: clients.size
         }), 0);
-    }
-    else {
+    } else {
         // set client states
         clients.delete(ID);
         clients.set(ID, {
@@ -95,9 +97,13 @@ ws.on('connection', function connection(ws, req) {
     });
     ws.on('message', function incoming(message) {
         for (let i = 0; i < message.length; i++) {
-            if (message[i].match(`/[^\x00-\x7F]/g`)) {return;}
+            if (message[i].match(`/[^\x00-\x7F]/g`)) {
+                return;
+            }
         }
-        if (ws.readyState !== 1) {return;}
+        if (ws.readyState !== 1) {
+            return;
+        }
         //define variables
         let alertStr;
         // prevent users the server isn't aware of from connecting
@@ -117,14 +123,20 @@ ws.on('connection', function connection(ws, req) {
             let currBoard;
             //Formulate contents of post
             for (let i = 0; i < msg.length; i++) {
-                if (i > 3) {postArr.push(msg[i]);}
+                if (i > 3) {
+                    postArr.push(msg[i]);
+                }
             }
             post = postArr.join();
-            if (post.length > 450) {return;}
+            if (post.length > 450) {
+                return;
+            }
             currBoard = msg[1];
             threadID = msg[2];
             nick = msg[3];
-            if (currBoard > 0) {return;}
+            if (currBoard > 0) {
+                return;
+            }
             // is this a valid command? if so, continue
             if (msg[0] in cmd && post.length > 0) {
                 let funct = cmd[msg[0]];
@@ -142,7 +154,9 @@ ws.on('connection', function connection(ws, req) {
                 }
             }
             post = postArr.join();
-            if (post.length > 450) {return;}
+            if (post.length > 450) {
+                return;
+            }
             if (post.length < 35) {
                 alertStr = 'Your post is too short. Please try again.';
                 wsAlert(ID, alertStr);
@@ -150,7 +164,9 @@ ws.on('connection', function connection(ws, req) {
             }
             currBoard = msg[1];
             nick = msg[2];
-            if (currBoard > 0) {return;}
+            if (currBoard > 0) {
+                return;
+            }
             // is this a valid command? if so, continue
             if (msg[0] in cmd && post.length > 0) {
                 let funct = cmd[msg[0]];
@@ -168,7 +184,9 @@ ws.on('connection', function connection(ws, req) {
                 ID: ID,
                 upload: ``
             });
-            if (currBoard > 0) {return;}
+            if (currBoard > 0) {
+                return;
+            }
             if (msg[0] in cmd) {
                 let funct = cmd[msg[0]];
                 funct(ID, currBoard);
@@ -187,7 +205,9 @@ ws.on('connection', function connection(ws, req) {
                 threadID: threadID,
                 ID: ID
             });
-            if (currBoard > 0) {return;}
+            if (currBoard > 0) {
+                return;
+            }
             if (msg[0] in cmd) {
                 let funct = cmd[msg[0]];
                 funct(ID, currBoard, threadID);
@@ -197,8 +217,12 @@ ws.on('connection', function connection(ws, req) {
     // Server commands go here
     const cmd = {
         getMessages: (ID, boardNum, threadID) => {
-            if (ws.readyState !== 1) {return;}
-			if (boardNum !== 0) {boardNum = 0}
+            if (ws.readyState !== 1) {
+                return;
+            }
+            if (boardNum !== 0) {
+                boardNum = 0
+            }
             console.log(`${boardNum}:${threadID} to ${ID}.`);
             clients.get(ID).board = boardNum;
             collection = database.collection('posts');
@@ -216,8 +240,12 @@ ws.on('connection', function connection(ws, req) {
             });
         },
         getThreads: (ID, boardNum) => {
-            if (ws.readyState !== 1) {return;}
-			if (boardNum !== 0) {boardNum = 0}
+            if (ws.readyState !== 1) {
+                return;
+            }
+            if (boardNum !== 0) {
+                boardNum = 0
+            }
             console.log(`Board ${boardNum} to ${ID}.`);
             clients.get(ID).board = boardNum;
             collection = database.collection('threads');
@@ -234,16 +262,19 @@ ws.on('connection', function connection(ws, req) {
             });
         },
         submitMessage: (ID, boardNum, threadID, nick, post, realIP) => {
-            if (ws.readyState !== 1) {return;}
-            if (boardNum == 0) {boardNum = 0}
+            if (ws.readyState !== 1) {
+                return;
+            }
+            if (boardNum == 0) {
+                boardNum = 0
+            }
             let alertStr, username, messageObj, postID, pic;
             let dateNow = Date.now();
             if (!post) {
                 alertStr = 'No message submitted.';
                 wsAlert(ID, alertStr);
                 return;
-            }
-            else if (throttledUsers.has(realIP)) {
+            } else if (throttledUsers.has(realIP)) {
                 alertStr = 'You may only submit a new post every second.';
                 wsAlert(ID, alertStr);
                 return;
@@ -251,8 +282,9 @@ ws.on('connection', function connection(ws, req) {
             // spam prevention
             throttledUsers.add(realIP);
             clearThrottles(realIP);
-            if (post.length > 450) {return;}
-            else {
+            if (post.length > 450) {
+                return;
+            } else {
                 collection = database.collection('posts');
                 collection2 = database.collection('threads');
                 nick ? username = nick : username = 'Anonymous';
@@ -291,9 +323,15 @@ ws.on('connection', function connection(ws, req) {
             }
         },
         submitThread: (ID, boardNum, nick, message, realIP) => {
-            if (ws.readyState !== 1) {return;}
-            if (boardNum !== 0) {boardNum = 0}
-            if (message > 450) {return;}
+            if (ws.readyState !== 1) {
+                return;
+            }
+            if (boardNum !== 0) {
+                boardNum = 0
+            }
+            if (message > 450) {
+                return;
+            }
             let alertStr, username, postID, pic, threadID, threadObj, messageObj;
             if (!message) {
                 alertStr = `You didn't enter a message.`;
@@ -358,7 +396,9 @@ ws.on('connection', function connection(ws, req) {
 //broadcast only to users on a certain board
 let wsBroadcastBoard = function (data, boardNum) {
     clients.forEach(function (client) {
-        if (client.socket.readyState !== 1) {return;}
+        if (client.socket.readyState !== 1) {
+            return;
+        }
         if (client.threadID == 0) {
             client.socket.send(data);
         }
@@ -367,7 +407,9 @@ let wsBroadcastBoard = function (data, boardNum) {
 //broadcast only to users in a certain thread
 let wsBroadcastThread = (data, threadID) => {
     clients.forEach(function (client) {
-        if (client.socket.readyState !== 1) {return;}
+        if (client.socket.readyState !== 1) {
+            return;
+        }
         if (client.threadID == threadID) {
             client.socket.send(data);
         }
@@ -376,14 +418,18 @@ let wsBroadcastThread = (data, threadID) => {
 //broadcast to every user with no conditions
 let wsBroadcast = (data) => {
     clients.forEach(function (client) {
-        if (client.socket.readyState !== 1) {return;}
+        if (client.socket.readyState !== 1) {
+            return;
+        }
         client.socket.send(data);
     });
 };
 //broadcast only to a specific user
 let wsBroadcastUser = (ID, data) => {
     clients.forEach(function (client) {
-        if (client.socket.readyState !== 1) {return;}
+        if (client.socket.readyState !== 1) {
+            return;
+        }
         if (client.IP == ID) {
             client.socket.send(data);
         }

@@ -41,15 +41,20 @@ MESSAGE_TEMPLATE = `
 const cmd = {
     domMessages: (snap) => {
         thread = snap[0].threadID;
-        if (thread == "0") {return;}
+        if (thread == "0") {
+            return;
+        }
         messageListElement.innerHTML = "";
         threadListElement.innerHTML = "";
         document.getElementById('messageBtn').classList.remove('hidden');
         document.getElementById('threadBtn').classList.add('hidden');
         document.getElementById('return').innerHTML = `Back`;
         let msgKey, i, x;
-        if (snap.length < 500) {x = snap.length;}
-        else {x = 500;}
+        if (snap.length < 500) {
+            x = snap.length;
+        } else {
+            x = 500;
+        }
         for (let i = 0; i < x; i++) {
             msgKey = document.getElementById(snap[i]._id);
             if (!msgKey && snap[i].board == 0 && i > -1) {
@@ -67,7 +72,9 @@ const cmd = {
         }
     },
     domThreads: (snap) => {
-        if (thread !== 0) {thread = 0;}
+        if (thread !== 0) {
+            thread = 0;
+        }
         threadListElement.innerHTML = "";
         messageListElement.innerHTML = "";
         document.getElementById('threadBtn').classList.remove('hidden');
@@ -75,8 +82,11 @@ const cmd = {
         document.getElementById('return').innerHTML = `Refresh`;
         let msgKey, threadKey;
         let i, x;
-        if (snap.length - 1 >= 50) {x = 50;}
-        else {x = snap.length;}
+        if (snap.length - 1 >= 50) {
+            x = 50;
+        } else {
+            x = snap.length;
+        }
         for (i = 0; i < x; i++) {
             msgKey = document.getElementById(snap[i]._id);
             threadKey = document.getElementById(snap[i].threadID);
@@ -118,16 +128,23 @@ const cmd = {
         cmd.domMessages(msg);
     },
     getUsers: (num) => {
-        if (num > 0) {boardDom.innerHTML = `Users online: ${num}`;}
+        if (num > 0) {
+            boardDom.innerHTML = `Users online: ${num}`;
+        }
     }
 };
 //set connection status in DOM
 let boardSet = (board) => {
-    if (retries > 0) {boardDom.innerHTML = `<p>Connecting/Reconnecting... (${retries})</p>`;}
-    else {boardDom.innerHTML = `<p>Connecting/Reconnecting...</p>`;}
+    if (retries > 0) {
+        boardDom.innerHTML = `<p>Connecting/Reconnecting... (${retries})</p>`;
+    } else {
+        boardDom.innerHTML = `<p>Connecting/Reconnecting...</p>`;
+    }
 };
 let emitThread = (board) => {
-    if (socket.readyState !== 1) {alert("Socket not connected. Please try again.");}
+    if (socket.readyState !== 1) {
+        alert("Socket not connected. Please try again.");
+    }
     const nick = document.getElementById('threadName').value;
     const message = document.getElementById('threadMessage').value;
     socket.send(['submitThread', board, nick, message]);
@@ -135,7 +152,9 @@ let emitThread = (board) => {
     threadFrm();
 };
 let emitPost = (board, thread) => {
-    if (socket.readyState !== 1) {alert("Socket not connected. Please try again.");}
+    if (socket.readyState !== 1) {
+        alert("Socket not connected. Please try again.");
+    }
     const message = document.getElementById('messageVal').value;
     const nick = document.getElementById('messageName').value;
     socket.send(['submitMessage', board, thread, nick, message]);
@@ -184,29 +203,27 @@ let init = () => {
         let exec, arg;
         if (parsedData.alert) {
             alert(parsedData.alert);
-        }
-        else if (parsedData.command && !parsedData.argument) {
+        } else if (parsedData.command && !parsedData.argument) {
             exec = parsedData.command;
             if (exec in cmd) {
                 cmd[exec]();
             }
-        }
-        else if (parsedData.command && parsedData.argument) {
+        } else if (parsedData.command && parsedData.argument) {
             exec = parsedData.command;
             arg = parsedData.argument;
             if (exec in cmd) {
                 cmd[exec](arg);
             }
+        } else {
+            console.log(`Error! ${parsedData}`);
         }
-        else {console.log(`Error! ${parsedData}`);}
     };
     socket.onopen = function () {
         retries = -1;
         console.log('client connected successfully');
         if (thread == 0) {
             cmd.getThreads(board);
-        }
-        else {
+        } else {
             cmd.getMessages(board, thread);
         }
     };
