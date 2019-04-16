@@ -128,7 +128,7 @@ ws.on('connection', function connection(ws, req) {
                 }
             }
             post = postArr.join();
-            if (post.length > 450) {
+            if (post.length > 650) {
                 return;
             }
             currBoard = msg[1];
@@ -154,7 +154,7 @@ ws.on('connection', function connection(ws, req) {
                 }
             }
             post = postArr.join();
-            if (post.length > 450) {
+            if (post.length > 650) {
                 return;
             }
             if (post.length < 35) {
@@ -282,7 +282,7 @@ ws.on('connection', function connection(ws, req) {
             // spam prevention
             throttledUsers.add(realIP);
             clearThrottles(realIP);
-            if (post.length > 450) {
+            if (post.length > 650) {
                 return;
             } else {
                 collection = database.collection('posts');
@@ -329,7 +329,7 @@ ws.on('connection', function connection(ws, req) {
             if (boardNum !== 0) {
                 boardNum = 0
             }
-            if (message > 450) {
+            if (message > 650) {
                 return;
             }
             let alertStr, username, postID, pic, threadID, threadObj, messageObj;
