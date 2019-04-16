@@ -120,8 +120,6 @@ ws.on('connection', function connection(ws, req) {
                 if (i > 3) {postArr.push(msg[i]);}
             }
             post = postArr.join();
-            if (post.match(/<script[\s\S]*?>[\s\S]*?<\/script>/gi)) {return;}
-            if (post.match(`/onerror/ig`)) {return;}
             if (post.length > 450) {return;}
             currBoard = msg[1];
             threadID = msg[2];
@@ -144,8 +142,6 @@ ws.on('connection', function connection(ws, req) {
                 }
             }
             post = postArr.join();
-            if (post.match(/<script[\s\S]*?>[\s\S]*?<\/script>/gi)) {return;}
-            if (post.match(/(?:onerror)/gi)) {return;}
             if (post.length > 450) {return;}
             if (post.length < 35) {
                 alertStr = 'Your post is too short. Please try again.';
