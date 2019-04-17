@@ -268,7 +268,7 @@ ws.on('connection', function connection(ws, req) {
             if (boardNum == 0) {
                 boardNum = 0
             }
-            let alertStr, username, messageObj, postID, pic;
+            let alertStr, username, messageObj, postID;
             let dateNow = Date.now();
             if (!post) {
                 alertStr = 'No message submitted.';
@@ -299,7 +299,7 @@ ws.on('connection', function connection(ws, req) {
                             nick: username,
                             message: post,
                             threadID: threadID,
-                            pic: pic,
+                            IP: realIP,
                             date: dateNow,
                             postID: postID
                         };
@@ -332,13 +332,13 @@ ws.on('connection', function connection(ws, req) {
             if (message > 1500) {
                 return;
             }
-            let alertStr, username, postID, pic, threadID, threadObj, messageObj;
+            let alertStr, username, postID, threadID, threadObj, messageObj;
             if (!message) {
                 alertStr = `You didn't enter a message.`;
                 return;
             }
             if (throttledUsers2.has(realIP)) {
-                alertStr = 'You may only submit a new thread every five minutes.';
+                alertStr = 'Please wait longer before submitting a new thread.';
                 wsAlert(ID, alertStr);
                 return;
             }
@@ -359,7 +359,7 @@ ws.on('connection', function connection(ws, req) {
                         nick: username,
                         message: message,
                         threadID: threadID,
-                        pic: pic,
+                        IP, realIP,
                         date: dateNow
                     };
                     if (threadObj && threadID) {
@@ -374,7 +374,7 @@ ws.on('connection', function connection(ws, req) {
                                     nick: username,
                                     message: message,
                                     threadID: threadID,
-                                    pic: pic,
+                                    IP: realIP,
                                     date: dateNow,
                                     postID: postID
                                 };
@@ -451,7 +451,7 @@ let clearThrottles2 = (IP) => {
     setTimeout(function () {
         throttledUsers2.delete(IP);
         console.log(throttledUsers2);
-    }, 300000);
+    }, 1000000);
 };
 let makeid = () => {
     var text = "";
