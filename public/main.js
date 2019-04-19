@@ -1,13 +1,11 @@
 //Global variables
-let lines, lines2, pictureNum, picUrl, socket, THREAD_TEMPLATE, OP_TEMPLATE, MESSAGE_TEMPLATE, sub, nick;
+let socket, THREAD_TEMPLATE, OP_TEMPLATE, MESSAGE_TEMPLATE, sub, nick;
 let thread = 0;
 const board = 0;
 let messages = [];
 let threads = [];
 let retries = -1;
 const rcv = new Audio('./imrcv.wav');
-const send = new Audio('./imsend.wav');
-const drop = new Audio('./drop.wav');
 //DOM elements 
 const boardDom = document.getElementById('currBoard');
 const threadListElement = document.getElementById('posts-container');
@@ -99,9 +97,7 @@ const cmd = {
                 let titleElement = container.querySelector('.post-title');
                 titleElement.textContent = snap[i].nick;
                 let messageElement = container.querySelector('.post-text');
-                container.querySelector('.post-title').textContent = container.querySelector('.post-title').textContent.replace(/<[^>]*>/g, '');
                 messageElement.textContent = snap[i].message;
-                messageElement.textContent = messageElement.textContent.replace(/<[^>]*>/g, '');
                 messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
             }
         }
