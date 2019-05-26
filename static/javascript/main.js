@@ -7,7 +7,7 @@ const board = 0;
 let messages = [];
 let threads = [];
 let retries = -1;
-const rcv = new Audio('./imrcv.wav');
+const rcv = new Audio(window.imrcvSrc);
 //DOM elements 
 const boardDom = document.getElementById('currBoard');
 const threadListElement = document.getElementById('posts-container');
