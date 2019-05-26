@@ -1,7 +1,3 @@
-# socketBBS
-NodeJS websocket bulletin board software that uses MongoDB.
-
-
 # How to start using socketBBS (These instructions are only for Linux)
 
 1. Install MongoDB and NodeJS. If you don't know how to do this, there are plenty of easy to follow guides for every distro. You can find these guides using your search engine of choice.
