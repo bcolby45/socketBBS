@@ -192,3 +192,14 @@ button {
     font-size: 1.2em;
     text-decoration: none;
 }
+
+@media only screen and (max-width: 709px) {
+    .post {
+        width:125px;
+    }
+    .message {
+        min-width: 87%;
+        max-width: 87%;
+        overflow:hidden;
+    }
+}
