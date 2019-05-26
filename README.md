@@ -22,8 +22,6 @@
 
 6. Type npm start and press enter. You are now running socketBBS.
 
-
-If you want to run socketBBS in the background, I suggest using tmux.
-
+# If you want to run socketBBS in the background, I suggest using tmux.
 
 ## Warning: If you are using cloudflare, socketBBS will not work properly unless you set cloudflare to true. This is on line 17 in app.js.
