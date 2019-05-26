@@ -355,7 +355,7 @@ ws.on('connection', function connection(ws, req) {
                         nick: username,
                         message: message,
                         threadID: threadID,
-                        IP, realIP,
+                        IP: realIP,
                         date: dateNow
                     };
                     if (threadObj && threadID) {
