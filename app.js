@@ -15,7 +15,7 @@ const asset = new AssetLoader(
     path.resolve('./public/static/entrypoints.json')
 );
 //run the websocket webserver
-webServer.listen(8080, function listening() {
+webServer.listen(80, function listening() {
     console.log('Listening on %d', webServer.address().port);
 });
 //name variables
@@ -30,6 +30,10 @@ let mongodb = require('mongodb').MongoClient,
 const dbUrl = "mongodb://localhost/db";
 // Use connect method to connect to the server
 mongodb.connect(dbUrl, {
+    auth: {
+        user: '',
+        password: ''
+    },
     useNewUrlParser: true
 }, function (err, client) {
     assert.equal(null, err);
