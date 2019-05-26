@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "compile": "encore production",
+    "compile:dev": "encore dev",
+    "watch": "encore dev --watch"
   },
   "author": "",
   "license": "ISC",
