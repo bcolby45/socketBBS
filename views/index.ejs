@@ -5,12 +5,14 @@
 	<title>socketBBS</title>
 
 	<meta name="viewport" content="width=device-width, initial-scale=0.70">
-	<link href="stylesheets/main.css" rel="stylesheet">
+	<% files.css.forEach(function(html) { %>
+	<%- html %>
+	<% }) %>
 </head>
 
 <body>
 	<div style="text-align:center; margin-right:auto; margin-left:auto; width:100%;">
-		<img src="./mail.gif" />
+		<%- asset('static/assets/mail.gif') %>
 	</div>
 	<div id="currBoard" style="margin-right: auto;margin-left: auto;margin-top: 10px; text-align:center;">
 	</div>
@@ -42,7 +44,9 @@
 	<div id="test-container" class="w-100">
 	</div>
 
-	<script src="main.js"></script>
+	<% files.js.forEach(function(html) { %>
+	<%- html %>
+	<% }) %>
 </body>
 
 
