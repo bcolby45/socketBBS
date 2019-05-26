@@ -26,12 +26,12 @@ module.exports = class AssetLoader {
             case 'js':
                 return `<script src=${uri}></script>`;
             case 'css':
-                return `<link rel="stylesheet" href=${uri}>`
+                return `<link rel="stylesheet" href=${uri}>`;
             case 'jpg':
             case 'jpeg':
             case 'png':
             case 'gif':
-                return `<img src=${uri} />`
+                return `<img src=${uri} />`;
             default:
                 throw new Error('Unkown file type');
         }
