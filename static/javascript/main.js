@@ -1,3 +1,5 @@
+require('../stylesheets/main.css');
+
 //Global variables
 let socket, THREAD_TEMPLATE, OP_TEMPLATE, MESSAGE_TEMPLATE, sub, nick;
 let thread = 0;

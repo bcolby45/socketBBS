@@ -1,6 +1,6 @@
 @font-face {
     font-family: VCR;
-    src: url(./VCR.ttf);
+    src: url(./assets/VCR.ttf);
 }
 * {
     font-family: 'VCR';
@@ -8,7 +8,7 @@
 
 html, body {
     background-color: black;
-    background-image:url(./dbricks.png);
+    background-image:url(./assets/dbricks.png);
     background-repeat:repeat;
     overflow-x: hidden;
     color: white;
