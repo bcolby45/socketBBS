@@ -16,11 +16,13 @@
 )
 ```
 
-4. Navigate to the folder where you saved socketBBS, then type npm install and press enter.
+4. Type exit and press enter to exit the MongoDB app.
 
-5. Open up app.js in a text editor of your choice and go to line 26. Input the username and password for the account you created earlier.
+5. Navigate to the folder where you saved socketBBS, then type npm install and press enter.
 
-6. Type npm start and press enter. You are now running socketBBS.
+6. Open up app.js in a text editor of your choice and go to line 26. Input the username and password for the account you created earlier.
+
+7. Type npm start and press enter. You are now running socketBBS.
 
 ### If you want to run socketBBS in the background, I suggest using tmux.
 
