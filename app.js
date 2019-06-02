@@ -27,7 +27,7 @@ throttledUsers2 = new Set();
 let mongodb = require('mongodb').MongoClient,
     assert = require('assert');
 // Connection URL
-const dbUrl = "mongodb://localhost/db";
+const dbUrl = "mongodb://localhost/admin";
 // Use connect method to connect to the server
 mongodb.connect(dbUrl, {
     auth: {
@@ -39,7 +39,7 @@ mongodb.connect(dbUrl, {
     assert.equal(null, err);
     if (err)
         throw `MongoDB failed to initiate. ${err}`;
-    database = client.db('socketbbs');
+    database = client.db('admin');
     console.log(`MongoDB connected!`);
 });
 // view engine setup
