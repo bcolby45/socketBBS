@@ -4,12 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "compile": "encore production",
+    "compile:dev": "encore dev",
+    "watch": "encore dev --watch"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.4",
+    "ejs": "^2.6.1",
     "express": "^4.16.3",
     "http": "0.0.0",
     "https": "^1.0.0",
@@ -18,7 +22,16 @@
     "ws": "^6.0.0"
   },
   "devDependencies": {
+    "@symfony/webpack-encore": "^0.27.0",
+    "autoprefixer": "^9.5.1",
     "mongodb": "^3.1.4",
-    "nodemon": "^1.18.4"
-  }
+    "nodemon": "^1.18.4",
+    "postcss-loader": "^3.0.0"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "Firefox ESR",
+    "not dead"
+  ]
 }

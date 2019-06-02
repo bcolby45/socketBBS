@@ -1,13 +1,19 @@
 const express = require("express");
 const path = require("path");
 const http = require('http');
+const ejs = require('ejs');
 const app = express();
 const webServer = http.createServer(app);
+const AssetLoader = require('./src/assets/AssetLoader');
 // WebSockets
 const webSocketServer = require('ws').Server;
 const ws = new webSocketServer({
     server: webServer
 });
+const asset = new AssetLoader(
+    path.resolve('./public/static/manifest.json'),
+    path.resolve('./public/static/entrypoints.json')
+);
 //run the websocket webserver
 webServer.listen(80, function listening() {
     console.log('Listening on %d', webServer.address().port);
@@ -37,6 +43,18 @@ mongodb.connect(dbUrl, {
     console.log(`MongoDB connected!`);
 });
 // view engine setup
+app.engine('html', ejs.renderFile);
+app.set('view engine', 'ejs');
+app.set('views', path.resolve('./views'));
+app.get('/', (req, res) => {
+    const options = {
+        asset: asset.getFileHtml.bind(asset),
+        assetUri: asset.getFile.bind(asset),
+        files: asset.getAsset('main'),
+    };
+
+    return res.render('index', options);
+});
 app.use(express.static(path.join(__dirname, 'public')));
 // don't kill the process if a library fails
 process.on('uncaughtException', function (err) {
@@ -302,18 +320,18 @@ ws.on('connection', function connection(ws, req) {
                         collection2.updateOne({
                             threadID: threadID
                         }, {
-                            $set: {
-                                date: dateNow
-                            }
-                        }).then(collection.insertOne(messageObj).then(function () {
-                            console.log(`completed message submission to #${threadID} time to broadcast`);
-                            wsBroadcastThread(JSON.stringify({
-                                command: 'displayMessage',
-                                argument: messageObj
-                            }), threadID);
-                        })).then(setTimeout(function () {
-                            cmd.getThreads(ID, boardNum);
-                        }));
+                                $set: {
+                                    date: dateNow
+                                }
+                            }).then(collection.insertOne(messageObj).then(function () {
+                                console.log(`completed message submission to #${threadID} time to broadcast`);
+                                wsBroadcastThread(JSON.stringify({
+                                    command: 'displayMessage',
+                                    argument: messageObj
+                                }), threadID);
+                            })).then(setTimeout(function () {
+                                cmd.getThreads(ID, boardNum);
+                            }));
                     });
                 }
             }

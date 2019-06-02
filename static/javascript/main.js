@@ -1,11 +1,13 @@
+require('../stylesheets/main.css');
+
 //Global variables
 let socket, THREAD_TEMPLATE, OP_TEMPLATE, MESSAGE_TEMPLATE, sub, nick;
-let thread = 0;
+window.thread = 0;
 const board = 0;
 let messages = [];
 let threads = [];
 let retries = -1;
-const rcv = new Audio('./imrcv.wav');
+const rcv = new Audio(window.imrcvSrc);
 //DOM elements 
 const boardDom = document.getElementById('currBoard');
 const threadListElement = document.getElementById('posts-container');
@@ -36,7 +38,7 @@ MESSAGE_TEMPLATE = `
 </div>
 `;
 //client commands
-const cmd = {
+window.cmd = {
     domMessages: (snap) => {
         thread = snap[0].threadID;
         if (thread == "0") {
@@ -130,14 +132,14 @@ const cmd = {
     }
 };
 //set connection status in DOM
-let boardSet = (board) => {
+window.boardSet = (board) => {
     if (retries > 0) {
         boardDom.innerHTML = `<p>Connecting/Reconnecting... (${retries})</p>`;
     } else {
         boardDom.innerHTML = `<p>Connecting/Reconnecting...</p>`;
     }
 };
-let emitThread = (board) => {
+window.emitThread = (board) => {
     if (socket.readyState !== 1) {
         alert("Socket not connected. Please try again.");
     }
@@ -147,7 +149,7 @@ let emitThread = (board) => {
     clearInput1();
     threadFrm();
 };
-let emitPost = (board, thread) => {
+window.emitPost = (board, thread) => {
     if (socket.readyState !== 1) {
         alert("Socket not connected. Please try again.");
     }
@@ -158,29 +160,29 @@ let emitPost = (board, thread) => {
     scrollDown();
     messageFrm();
 };
-let scrollDown = () => {
+window.scrollDown = () => {
     window.scrollTo(0, document.body.scrollHeight);
 };
-let threadFrm = () => {
+window.threadFrm = () => {
     document.getElementById('threadSubmit').classList.toggle('hidden');
     document.getElementById('return').classList.toggle('hidden');
     clearInput1();
 };
-let messageFrm = () => {
+window.messageFrm = () => {
     document.getElementById('messageSubmit').classList.toggle('hidden');
     document.getElementById('return').classList.toggle('hidden');
     clearInput2();
 };
-let clearInput1 = () => {
+window.clearInput1 = () => {
     threadName.value = "";
     threadMessage.value = "";
 };
-let clearInput2 = () => {
+window.clearInput2 = () => {
     messageName.value = "";
     messageVal.value = "";
 };
 //lines for initialization
-let init = () => {
+window.init = () => {
     retries = retries + 1;
     socket = new WebSocket(`ws://${location.host}`);
     // Log errors to the console for debugging.
