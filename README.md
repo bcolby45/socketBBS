@@ -20,7 +20,7 @@
 
 5. Navigate to the folder where you saved socketBBS, then type npm install and press enter.
 
-6. Open up app.js in a text editor of your choice and go to line 26. Input the username and password for the account you created earlier.
+6. Open up app.js in a text editor of your choice and go to line 32. Input the username and password for the account you created earlier.
 
 7. Type npm start and press enter. You are now running socketBBS.
 
