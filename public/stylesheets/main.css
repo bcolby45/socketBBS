@@ -1,6 +1,6 @@
 @font-face {
     font-family: VCR;
-    src: url(./assets/VCR.ttf);
+    src: url(./VCR.ttf);
 }
 * {
     font-family: 'VCR';
@@ -8,7 +8,7 @@
 
 html, body {
     background-color: black;
-    background-image:url(./assets/dbricks.png);
+    background-image:url(./dbricks.png);
     background-repeat:repeat;
     overflow-x: hidden;
     color: white;
@@ -191,15 +191,4 @@ button {
     padding-left: 10px;
     font-size: 1.2em;
     text-decoration: none;
-}
-
-@media only screen and (max-width: 709px) {
-    .post {
-        width:125px;
-    }
-    .message {
-        min-width: 87%;
-        max-width: 87%;
-        overflow:hidden;
-    }
 }
