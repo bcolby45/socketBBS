@@ -59,7 +59,6 @@ window.cmd = {
             msgKey = document.getElementById(snap[i]._id);
             if (!msgKey && snap[i].board == 0 && i > -1) {
                 let container = document.createElement('div');
-                console.log(snap[i]);
                 container.innerHTML = MESSAGE_TEMPLATE;
                 container.setAttribute('id', snap[i]._id);
                 messageListElement.appendChild(container);
