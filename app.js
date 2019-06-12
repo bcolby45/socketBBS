@@ -362,30 +362,31 @@ ws.on('connection', function connection(ws, req) {
                         postID: postID,
                     };
 
-                    threads.updateOne(
-                        {
-                            threadID: threadID,
-                        },
-                        {
-                            $set: {
-                                date: dateNow,
+                    threads
+                        .updateOne(
+                            {
+                                threadID: threadID,
                             },
-                        },
-                           )
-                           .then(() => posts.insertOne(messageObj))
-                           .then(() => {
-                               console.log(`completed message submission to #${ threadID } time to broadcast`);
-                               wsBroadcastThread(
-                                   JSON.stringify(
-                                       {
-                                           command: 'displayMessage',
-                                           argument: messageObj,
-                                       },
-                                   ),
-                                   threadID,
-                               );
-                           })
-                           .then(() => cmd.getThreads(ID, boardNum));
+                            {
+                                $set: {
+                                    date: dateNow,
+                                },
+                            },
+                        )
+                        .then(() => posts.insertOne(messageObj))
+                        .then(() => {
+                            console.log(`completed message submission to #${ threadID } time to broadcast`);
+                            wsBroadcastThread(
+                                JSON.stringify(
+                                    {
+                                        command: 'displayMessage',
+                                        argument: messageObj,
+                                    },
+                                ),
+                                threadID,
+                            );
+                        })
+                        .then(() => cmd.getThreads(ID, boardNum));
                 });
 
         },
