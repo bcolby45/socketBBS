@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const http = require('http');
 const ejs = require('ejs');
-const mongodb = require('mongodb').MongoClient;
+const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 const app = express();
 const webServer = http.createServer(app);
@@ -30,24 +30,22 @@ const cloudflare = false;
 const throttledUsers = new Set();
 const throttledUsers2 = new Set();
 // Connection URL
-const dbUrl = 'mongodb://localhost/admin';
+const dbUrl = 'mongodb://username:password@localhost/admin';
 // Use connect method to connect to the server
 let database;
-
-mongodb.connect(dbUrl, {
-    auth: {
-        user: '',
-        password: '',
-    },
-    useNewUrlParser: true,
-}, function(err, client) {
-    assert.equal(null, err);
-    if (err) {
-        throw `MongoDB failed to initiate. ${ err }`;
-    }
-    database = client.db('admin');
-    console.log(`MongoDB connected!`);
-});
+MongoClient
+    .connect(dbUrl, {
+        useNewUrlParser: true,
+    })
+    .then((client) => {
+        console.log('|> MongoDB connected!');
+        database = client.db('admin');
+    })
+    .catch((err) => {
+        console.error('|> MongoDB failed to initiate.');
+        console.error(err);
+        process.exit(0);
+    });
 
 // view engine setup
 app.engine('html', ejs.renderFile);
@@ -263,7 +261,7 @@ ws.on('connection', function connection(ws, req) {
                 )
                 .limit(400)
                 .toArray(function(err, docs) {
-                    assert.equal(err, null);
+                    assert.strictEqual(err, null);
                     console.log(`${ ID } requested contents of ${ threadID }`);
                     ws.send(
                         JSON.stringify(
@@ -301,7 +299,7 @@ ws.on('connection', function connection(ws, req) {
                 )
                 .limit(400)
                 .toArray(function(err, docs) {
-                    assert.equal(err, null);
+                    assert.strictEqual(err, null);
                     wsBroadcastBoard(
                         JSON.stringify(
                             {
@@ -354,7 +352,7 @@ ws.on('connection', function connection(ws, req) {
                     },
                 )
                 .toArray((err, docs) => {
-                    assert.equal(err, null);
+                    assert.strictEqual(err, null);
                     const postID = docs[ 0 ] ? docs[ 0 ].postID + 1 : 1;
                     const messageObj = {
                         board: boardNum,
@@ -440,7 +438,7 @@ ws.on('connection', function connection(ws, req) {
                     },
                 )
                 .toArray(function(err, docs) {
-                    assert.equal(err, null);
+                    assert.strictEqual(err, null);
                     const threadID = makeID();
                     const threadObj = {
                         board: boardNum,
@@ -467,7 +465,7 @@ ws.on('connection', function connection(ws, req) {
                                     },
                                 )
                                 .toArray((err, docs) => {
-                                    assert.equal(err, null);
+                                    assert.strictEqual(err, null);
                                     const postID = docs[ 0 ] ? docs[ 0 ].postID + 1 : 1;
                                     const messageObj = {
                                         board: boardNum,
