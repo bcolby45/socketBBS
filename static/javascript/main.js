@@ -2,7 +2,7 @@ require('../stylesheets/main.css');
 
 //Global variables
 let socket, THREAD_TEMPLATE, MESSAGE_TEMPLATE;
-window.thread = 0;
+window.thread = '0';
 const board = 0;
 let messages = [];
 let threads = [];
@@ -35,10 +35,10 @@ MESSAGE_TEMPLATE = `
 `;
 //client commands
 window.cmd = {
-    domMessages: (snap) => {
-        window.thread = snap[ 0 ].threadID;
+    domMessages: (messages) => {
+        window.thread = String(messages[ 0 ].threadID);
 
-        if (thread === '0') {
+        if (window.thread === '0') {
             return;
         }
 
@@ -47,36 +47,36 @@ window.cmd = {
         document.getElementById('messageBtn').classList.remove('hidden');
         document.getElementById('threadBtn').classList.add('hidden');
         document.getElementById('return').innerHTML = `Back`;
-        const x = Math.min(snap.length, 500);
-        for (let i = 0; i < x; i++) {
-            const msgKey = document.getElementById(snap[ i ]._id);
+
+        const shownMessages = messages.slice(0, 500);
+        for (const message of shownMessages) {
+            const msgKey = document.getElementById(message._id);
 
             if (
                 msgKey
-                || String(snap[ i ].board) !== '0'
-                || i <= -1
+                || String(message.board) !== '0'
             ) {
                 continue;
             }
 
             const container = document.createElement('div');
             container.innerHTML = MESSAGE_TEMPLATE;
-            container.setAttribute('id', snap[ i ]._id);
+            container.setAttribute('id', message._id);
 
             messageListElement.appendChild(container);
 
             const titleElement = container.querySelector('.message-title');
-            titleElement.textContent = snap[ i ].nick;
+            titleElement.textContent = message.nick;
 
             const messageElement = container.querySelector('.message-text');
-            messageElement.textContent = snap[ i ].message;
+            messageElement.textContent = message.message;
             messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
         }
     },
 
-    domThreads: (snap) => {
-        if (thread !== 0) {
-            window.thread = 0;
+    domThreads: (threads) => {
+        if (window.thread !== '0') {
+            window.thread = '0';
         }
 
         threadListElement.innerHTML = '';
@@ -85,31 +85,31 @@ window.cmd = {
         document.getElementById('messageBtn').classList.add('hidden');
         document.getElementById('return').innerHTML = `Refresh`;
 
-        const x = Math.min(50, snap.length);
-        for (let i = 0; i < x; i++) {
-            const msgKey = document.getElementById(snap[ i ]._id);
-            const threadKey = document.getElementById(snap[ i ].threadID);
+        const shownThreads = threads.slice(0, 50);
+        for (const thread of shownThreads) {
+            const messageKey = document.getElementById(thread._id);
+            const threadKey = document.getElementById(thread.threadID);
 
             if (
-                msgKey
+                messageKey
                 || threadKey
-                || String(snap[ i ].board) !== '0'
+                || String(thread.board) !== '0'
             ) {
                 continue;
             }
 
             const container = document.createElement('div');
             container.innerHTML = THREAD_TEMPLATE;
-            container.setAttribute('id', snap[ i ].threadID);
+            container.setAttribute('id', thread.threadID);
             container.setAttribute('onClick', `cmd.getMessages(0, this.getAttribute('id'))`);
 
             threadListElement.appendChild(container);
 
             const titleElement = container.querySelector('.post-title');
-            titleElement.textContent = snap[ i ].nick;
+            titleElement.textContent = thread.nick;
 
             const messageElement = container.querySelector('.post-text');
-            messageElement.textContent = snap[ i ].message;
+            messageElement.textContent = thread.message;
             messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
         }
     },
@@ -123,7 +123,7 @@ window.cmd = {
     },
 
     displayThreads: (msg) => {
-        window.thread = 0;
+        window.thread = '0';
         document.getElementById('return').innerHTML = `Refresh`;
         threads = msg;
         cmd.domThreads(threads);
