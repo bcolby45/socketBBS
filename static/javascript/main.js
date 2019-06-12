@@ -224,23 +224,25 @@ window.init = () => {
     };
 
     socket.onmessage = function(message) {
-        let parsedData = JSON.parse(message.data);
-        let exec, arg;
+        const parsedData = JSON.parse(message.data);
+        console.log('|> MESSAGE', parsedData);
+
         if (parsedData.alert) {
             alert(parsedData.alert);
-        } else if (parsedData.command && !parsedData.argument) {
-            exec = parsedData.command;
-            if (exec in cmd) {
-                cmd[ exec ]();
-            }
-        } else if (parsedData.command && parsedData.argument) {
-            exec = parsedData.command;
-            arg = parsedData.argument;
-            if (exec in cmd) {
-                cmd[ exec ](arg);
-            }
-        } else {
+            return;
+        }
+
+        if (!parsedData.command) {
             console.log(`Error! ${ parsedData }`);
+            return;
+        }
+
+        const fnName = parsedData.command;
+        const arg = parsedData.argument || null;
+        const fn = window.cmd[ fnName ];
+
+        if (fn) {
+            fn(arg);
         }
     };
 
