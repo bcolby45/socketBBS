@@ -1,11 +1,10 @@
 require('../stylesheets/main.css');
 
 //Global variables
-let socket, THREAD_TEMPLATE, MESSAGE_TEMPLATE;
+let socket;
 window.thread = '0';
 const board = 0;
 let messages = [];
-let threads = [];
 let retries = -1;
 const rcv = new Audio(window.imrcvSrc);
 //DOM elements
@@ -17,13 +16,13 @@ const threadMessage = document.getElementById('threadMessage');
 const messageName = document.getElementById('messageName');
 const messageVal = document.getElementById('messageVal');
 //HTML templates
-THREAD_TEMPLATE = `
+const THREAD_TEMPLATE = `
 <div class="post center">
     <div class="post-title"></div>
     <div class="post-text"></div>
 </div>
 `;
-MESSAGE_TEMPLATE = `
+const MESSAGE_TEMPLATE = `
 <div class="message">
     <div style="float:left;">
         <div class="flex start">
@@ -125,8 +124,7 @@ window.cmd = {
     displayThreads: (msg) => {
         window.thread = '0';
         document.getElementById('return').innerHTML = `Refresh`;
-        threads = msg;
-        cmd.domThreads(threads);
+        cmd.domThreads(msg);
     },
 
     displayMessage: (msg) => {
