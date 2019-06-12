@@ -225,7 +225,6 @@ window.init = () => {
 
     socket.onmessage = function(message) {
         const parsedData = JSON.parse(message.data);
-        console.log('|> MESSAGE', parsedData);
 
         if (parsedData.alert) {
             alert(parsedData.alert);

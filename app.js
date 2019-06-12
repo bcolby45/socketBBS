@@ -177,7 +177,7 @@ ws.on('connection', function connection(ws, req) {
                 return wsAlert(ID, 'Your post is too long. Please try again.');
             }
 
-            if (post.length < 35) {
+            if (post.length < 1) {
                 return wsAlert(ID, 'Your post is too short. Please try again.');
             }
 
@@ -357,7 +357,6 @@ ws.on('connection', function connection(ws, req) {
                         nick: username,
                         message: post,
                         threadID: threadID,
-                        IP: realIP,
                         date: dateNow,
                         postID: postID,
                     };
@@ -437,7 +436,6 @@ ws.on('connection', function connection(ws, req) {
                         nick: username,
                         message: message,
                         threadID: threadID,
-                        IP: realIP,
                         date: dateNow,
                     };
 
@@ -464,7 +462,6 @@ ws.on('connection', function connection(ws, req) {
                                         nick: username,
                                         message: message,
                                         threadID: threadID,
-                                        IP: realIP,
                                         date: dateNow,
                                         postID: postID,
                                     };
