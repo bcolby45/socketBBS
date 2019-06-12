@@ -385,8 +385,7 @@ ws.on('connection', function connection(ws, req) {
                                 ),
                                 threadID,
                             );
-                        })
-                        .then(() => cmd.getThreads(ID, boardNum));
+                        });
                 });
 
         },
