@@ -316,9 +316,7 @@ ws.on('connection', function connection(ws, req) {
                 return;
             }
 
-            if (boardNum == 0) {
-                boardNum = 0;
-            }
+            boardNum = Number(boardNum);
 
             const dateNow = Date.now();
 
@@ -374,26 +372,20 @@ ws.on('connection', function connection(ws, req) {
                             },
                         },
                            )
-                           .then(
-                               posts
-                                   .insertOne(messageObj)
-                                   .then(() => {
-                                             console.log(`completed message submission to #${ threadID } time to broadcast`);
-                                             wsBroadcastThread(
-                                                 JSON.stringify(
-                                                     {
-                                                         command: 'displayMessage',
-                                                         argument: messageObj,
-                                                     },
-                                                 ),
-                                                 threadID,
-                                             );
-                                         },
+                           .then(() => posts.insertOne(messageObj))
+                           .then(() => {
+                               console.log(`completed message submission to #${ threadID } time to broadcast`);
+                               wsBroadcastThread(
+                                   JSON.stringify(
+                                       {
+                                           command: 'displayMessage',
+                                           argument: messageObj,
+                                       },
                                    ),
-                           )
-                           .then(setTimeout(function() {
-                               cmd.getThreads(ID, boardNum);
-                           }));
+                                   threadID,
+                               );
+                           })
+                           .then(() => cmd.getThreads(ID, boardNum));
                 });
 
         },
@@ -437,7 +429,7 @@ ws.on('connection', function connection(ws, req) {
                         $natural: -1,
                     },
                 )
-                .toArray(function(err, docs) {
+                .toArray((err) => {
                     assert.strictEqual(err, null);
                     const threadID = makeID();
                     const threadObj = {
@@ -500,7 +492,7 @@ function wsBroadcastBoard(data, boardNum) {
             return;
         }
 
-        if (client.threadID == 0) {
+        if (client.board === boardNum) {
             client.socket.send(data);
         }
     });
@@ -513,20 +505,9 @@ function wsBroadcastThread(data, threadID) {
             return;
         }
 
-        if (client.threadID == threadID) {
+        if (client.threadID === threadID) {
             client.socket.send(data);
         }
-    });
-}
-
-//broadcast to every user with no conditions
-function wsBroadcast(data) {
-    clients.forEach(function(client) {
-        if (client.socket.readyState !== 1) {
-            return;
-        }
-
-        client.socket.send(data);
     });
 }
 
@@ -537,7 +518,7 @@ function wsBroadcastUser(ID, data) {
             return;
         }
 
-        if (client.IP == ID) {
+        if (client.ID === ID) {
             client.socket.send(data);
         }
     });
