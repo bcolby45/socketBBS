@@ -1,229 +1,260 @@
 require('../stylesheets/main.css');
 
 //Global variables
-let socket, THREAD_TEMPLATE, OP_TEMPLATE, MESSAGE_TEMPLATE, sub, nick;
-window.thread = 0;
+let socket;
+window.thread = '0';
 const board = 0;
 let messages = [];
-let threads = [];
 let retries = -1;
 const rcv = new Audio(window.imrcvSrc);
-//DOM elements 
+//DOM elements
 const boardDom = document.getElementById('currBoard');
 const threadListElement = document.getElementById('posts-container');
 const messageListElement = document.getElementById('test-container');
-let threadName = document.getElementById('threadName');
-let threadMessage = document.getElementById('threadMessage');
-let messageName = document.getElementById('messageName');
-let messageVal = document.getElementById('messageVal');
+const threadName = document.getElementById('threadName');
+const threadMessage = document.getElementById('threadMessage');
+const messageName = document.getElementById('messageName');
+const messageVal = document.getElementById('messageVal');
 //HTML templates
-THREAD_TEMPLATE = `
+const THREAD_TEMPLATE = `
 <div class="post center">
-    <div class="post-title">
-    </div>
-    <div class="post-text">
-    </div>
+    <div class="post-title"></div>
+    <div class="post-text"></div>
 </div>
 `;
-MESSAGE_TEMPLATE = `
+const MESSAGE_TEMPLATE = `
 <div class="message">
     <div style="float:left;">
         <div class="flex start">
-            <div class="message-title">
-            </div>
+            <div class="message-title"></div>
         </div>
-        <div class="message-text">
-        </div>
+        <div class="message-text"></div>
     </div>
 </div>
 `;
 //client commands
 window.cmd = {
-    domMessages: (snap) => {
-        thread = snap[0].threadID;
-        if (thread == "0") {
+    domMessages: (messages) => {
+        window.thread = String(messages[ 0 ].threadID);
+
+        if (window.thread === '0') {
             return;
         }
-        messageListElement.innerHTML = "";
-        threadListElement.innerHTML = "";
+
+        messageListElement.innerHTML = '';
+        threadListElement.innerHTML = '';
         document.getElementById('messageBtn').classList.remove('hidden');
         document.getElementById('threadBtn').classList.add('hidden');
         document.getElementById('return').innerHTML = `Back`;
-        let msgKey, i, x;
-        if (snap.length < 500) {
-            x = snap.length;
-        } else {
-            x = 500;
-        }
-        for (let i = 0; i < x; i++) {
-            msgKey = document.getElementById(snap[i]._id);
-            if (!msgKey && snap[i].board == 0 && i > -1) {
-                let container = document.createElement('div');
-                container.innerHTML = MESSAGE_TEMPLATE;
-                container.setAttribute('id', snap[i]._id);
-                messageListElement.appendChild(container);
-                let titleElement = container.querySelector('.message-title');
-                titleElement.textContent = snap[i].nick;
-                let messageElement = container.querySelector('.message-text');
-                messageElement.textContent = snap[i].message;
-                messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
+
+        const shownMessages = messages.slice(0, 500);
+        for (const message of shownMessages) {
+            const msgKey = document.getElementById(message._id);
+
+            if (
+                msgKey
+                || String(message.board) !== '0'
+            ) {
+                continue;
             }
+
+            const container = document.createElement('div');
+            container.innerHTML = MESSAGE_TEMPLATE;
+            container.setAttribute('id', message._id);
+
+            messageListElement.appendChild(container);
+
+            const titleElement = container.querySelector('.message-title');
+            titleElement.textContent = message.nick;
+
+            const messageElement = container.querySelector('.message-text');
+            messageElement.textContent = message.message;
+            messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
         }
     },
-    domThreads: (snap) => {
-        if (thread !== 0) {
-            thread = 0;
+
+    domThreads: (threads) => {
+        if (window.thread !== '0') {
+            window.thread = '0';
         }
-        threadListElement.innerHTML = "";
-        messageListElement.innerHTML = "";
+
+        threadListElement.innerHTML = '';
+        messageListElement.innerHTML = '';
         document.getElementById('threadBtn').classList.remove('hidden');
         document.getElementById('messageBtn').classList.add('hidden');
         document.getElementById('return').innerHTML = `Refresh`;
-        let msgKey, threadKey;
-        let i, x;
-        if (snap.length - 1 >= 50) {
-            x = 50;
-        } else {
-            x = snap.length;
-        }
-        for (i = 0; i < x; i++) {
-            msgKey = document.getElementById(snap[i]._id);
-            threadKey = document.getElementById(snap[i].threadID);
-            if (!msgKey && !threadKey && snap[i].board == 0) {
-                let container = document.createElement('div');
-                container.innerHTML = THREAD_TEMPLATE;
-                container.setAttribute('id', snap[i].threadID);
-                container.setAttribute('onClick', `cmd.getMessages(0, this.getAttribute('id'))`);
-                threadListElement.appendChild(container);
-                let titleElement = container.querySelector('.post-title');
-                titleElement.textContent = snap[i].nick;
-                let messageElement = container.querySelector('.post-text');
-                messageElement.textContent = snap[i].message;
-                messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
+
+        const shownThreads = threads.slice(0, 50);
+        for (const thread of shownThreads) {
+            const messageKey = document.getElementById(thread._id);
+            const threadKey = document.getElementById(thread.threadID);
+
+            if (
+                messageKey
+                || threadKey
+                || String(thread.board) !== '0'
+            ) {
+                continue;
             }
+
+            const container = document.createElement('div');
+            container.innerHTML = THREAD_TEMPLATE;
+            container.setAttribute('id', thread.threadID);
+            container.setAttribute('onClick', `cmd.getMessages(0, this.getAttribute('id'))`);
+
+            threadListElement.appendChild(container);
+
+            const titleElement = container.querySelector('.post-title');
+            titleElement.textContent = thread.nick;
+
+            const messageElement = container.querySelector('.post-text');
+            messageElement.textContent = thread.message;
+            messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
         }
     },
+
     getThreads: (board) => {
-        socket.send([`getThreads`, board]);
+        socket.send([ `getThreads`, board ]);
     },
+
     getMessages: (board, threadID) => {
-        socket.send([`getMessages`, board, threadID]);
+        socket.send([ `getMessages`, board, threadID ]);
     },
+
     displayThreads: (msg) => {
-        thread = 0;
+        window.thread = '0';
         document.getElementById('return').innerHTML = `Refresh`;
-        threads = msg;
-        cmd.domThreads(threads);
+        cmd.domThreads(msg);
     },
+
     displayMessage: (msg) => {
         messages.push(msg);
         cmd.domMessages(messages);
         rcv.play();
     },
+
     displayMessages: (msg) => {
         messages = msg;
         cmd.domMessages(msg);
     },
+
     getUsers: (num) => {
         if (num > 0) {
-            boardDom.innerHTML = `Users online: ${num}`;
+            boardDom.innerHTML = `Users online: ${ num }`;
         }
-    }
+    },
 };
+
 //set connection status in DOM
 window.boardSet = (board) => {
     if (retries > 0) {
-        boardDom.innerHTML = `<p>Connecting/Reconnecting... (${retries})</p>`;
+        boardDom.innerHTML = `<p>Connecting/Reconnecting... (${ retries })</p>`;
     } else {
         boardDom.innerHTML = `<p>Connecting/Reconnecting...</p>`;
     }
 };
+
 window.emitThread = (board) => {
     if (socket.readyState !== 1) {
-        alert("Socket not connected. Please try again.");
+        alert('Socket not connected. Please try again.');
     }
+
     const nick = document.getElementById('threadName').value;
     const message = document.getElementById('threadMessage').value;
-    socket.send(['submitThread', board, nick, message]);
+    socket.send([ 'submitThread', board, nick, message ]);
     clearInput1();
     threadFrm();
 };
+
 window.emitPost = (board, thread) => {
     if (socket.readyState !== 1) {
-        alert("Socket not connected. Please try again.");
+        alert('Socket not connected. Please try again.');
     }
+
     const message = document.getElementById('messageVal').value;
     const nick = document.getElementById('messageName').value;
-    socket.send(['submitMessage', board, thread, nick, message]);
+    socket.send([ 'submitMessage', board, thread, nick, message ]);
     clearInput2();
     scrollDown();
     messageFrm();
 };
+
 window.scrollDown = () => {
     window.scrollTo(0, document.body.scrollHeight);
 };
+
 window.threadFrm = () => {
     document.getElementById('threadSubmit').classList.toggle('hidden');
     document.getElementById('return').classList.toggle('hidden');
     clearInput1();
 };
+
 window.messageFrm = () => {
     document.getElementById('messageSubmit').classList.toggle('hidden');
     document.getElementById('return').classList.toggle('hidden');
     clearInput2();
 };
+
 window.clearInput1 = () => {
-    threadName.value = "";
-    threadMessage.value = "";
+    threadName.value = '';
+    threadMessage.value = '';
 };
+
 window.clearInput2 = () => {
-    messageName.value = "";
-    messageVal.value = "";
+    messageName.value = '';
+    messageVal.value = '';
 };
+
 //lines for initialization
 window.init = () => {
     retries = retries + 1;
-    socket = new WebSocket(`ws://${location.host}`);
+    socket = new WebSocket(`ws://${ location.host }`);
+
     // Log errors to the console for debugging.
-    socket.onerror = function (error) {
+    socket.onerror = function(error) {
         console.log(error);
     };
+
     // Reconnect upon disconnect.
-    socket.onclose = function () {
+    socket.onclose = function() {
         console.log(`Your socket has been disconnected. Attempting to reconnect...`);
-        setTimeout(function () {
+        setTimeout(function() {
             init();
         }, 1000);
     };
-    socket.onmessage = function (message) {
-        let parsedData = JSON.parse(message.data);
-        let exec, arg;
+
+    socket.onmessage = function(message) {
+        const parsedData = JSON.parse(message.data);
+
         if (parsedData.alert) {
             alert(parsedData.alert);
-        } else if (parsedData.command && !parsedData.argument) {
-            exec = parsedData.command;
-            if (exec in cmd) {
-                cmd[exec]();
-            }
-        } else if (parsedData.command && parsedData.argument) {
-            exec = parsedData.command;
-            arg = parsedData.argument;
-            if (exec in cmd) {
-                cmd[exec](arg);
-            }
-        } else {
-            console.log(`Error! ${parsedData}`);
+            return;
+        }
+
+        if (!parsedData.command) {
+            console.log(`Error! ${ parsedData }`);
+            return;
+        }
+
+        const fnName = parsedData.command;
+        const arg = parsedData.argument || null;
+        const fn = window.cmd[ fnName ];
+
+        if (fn) {
+            fn(arg);
         }
     };
-    socket.onopen = function () {
+
+    socket.onopen = function() {
         retries = -1;
         console.log('client connected successfully');
-        if (thread == 0) {
+        if (String(thread) === '0') {
             cmd.getThreads(board);
         } else {
             cmd.getMessages(board, thread);
         }
     };
 };
+
 //initialize
 init();
