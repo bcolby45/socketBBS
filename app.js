@@ -64,7 +64,7 @@ app.get('/', (req, res) => {
 app.use(express.static(path.join(__dirname, 'public')));
 
 // don't kill the process if a library fails
-process.on('uncaughtException', function(err) {
+process.on('uncaughtException', function (err) {
     console.log('UNCAUGHT EXCEPTION\n' + err);
 });
 
@@ -73,13 +73,13 @@ const clients = new Map();
 ws.on('connection', function connection(ws, req) {
     // get, store and verify client IP
     const ID = makeID();
-    const realIP = cloudflare ? req.headers[ 'cf-connecting-ip' ] : req.connection.remoteAddress;
-    console.log(`${ realIP } just connected.`);
+    const realIP = cloudflare ? req.headers['cf-connecting-ip'] : req.connection.remoteAddress;
+    console.log(`${realIP} just connected.`);
 
     // set client states
     if (clients.has(ID)) {
         clients.delete(ID);
-        console.log(`${ realIP } disconnected.`);
+        console.log(`${realIP} disconnected.`);
     }
 
     clients.set(ID, {
@@ -99,7 +99,7 @@ ws.on('connection', function connection(ws, req) {
         0,
     );
 
-    ws.on('close', function() {
+    ws.on('close', function () {
         //remove client from currently connected users
         clients.delete(ID);
         // Update user count on client side
@@ -116,7 +116,7 @@ ws.on('connection', function connection(ws, req) {
 
     ws.on('message', function incoming(message) {
         for (let i = 0; i < message.length; i++) {
-            if (message[ i ].match(`/[^\x00-\x7F]/g`)) {
+            if (message[i].match(`/[^\x00-\x7F]/g`)) {
                 return wsAlert(ID, 'Your post contains illegal characters. Please try again.');
             }
         }
@@ -132,12 +132,12 @@ ws.on('connection', function connection(ws, req) {
 
         const msg = message.split(',');
         // submitting a reply
-        if (msg[ 0 ] === 'submitMessage') {
+        if (msg[0] === 'submitMessage') {
             //Formulate contents of post
             const postArr = [];
             for (let i = 0; i < msg.length; i++) {
                 if (i > 3) {
-                    postArr.push(msg[ i ]);
+                    postArr.push(msg[i]);
                 }
             }
 
@@ -147,27 +147,27 @@ ws.on('connection', function connection(ws, req) {
                 return wsAlert(ID, 'Your post is too long. Please try again.');
             }
 
-            const currBoard = msg[ 1 ];
-            const threadID = msg[ 2 ];
-            const nick = msg[ 3 ];
+            const currBoard = msg[1];
+            const threadID = msg[2];
+            const nick = msg[3];
 
             if (currBoard > 0) {
                 return;
             }
 
             // is this a valid command? if so, continue
-            if (msg[ 0 ] in cmd && post.length > 0) {
-                const funct = cmd[ msg[ 0 ] ];
+            if (msg[0] in cmd && post.length > 0) {
+                const funct = cmd[msg[0]];
                 funct(ID, currBoard, threadID, nick, post, realIP);
             }
         }
 
         // submit a thread
-        if (msg[ 0 ] === 'submitThread') {
+        if (msg[0] === 'submitThread') {
             const postArr = [];
             for (let i = 0; i < msg.length; i++) {
                 if (i > 2) {
-                    postArr.push(msg[ i ]);
+                    postArr.push(msg[i]);
                 }
             }
 
@@ -181,22 +181,22 @@ ws.on('connection', function connection(ws, req) {
                 return wsAlert(ID, 'Your post is too short. Please try again.');
             }
 
-            const currBoard = msg[ 1 ];
-            const nick = msg[ 2 ];
+            const currBoard = msg[1];
+            const nick = msg[2];
 
             if (currBoard > 0) {
                 return;
             }
 
             // is this a valid command? if so, continue
-            if (msg[ 0 ] in cmd && post.length > 0) {
-                let funct = cmd[ msg[ 0 ] ];
+            if (msg[0] in cmd && post.length > 0) {
+                let funct = cmd[msg[0]];
                 funct(ID, currBoard, nick, post, realIP);
             }
         }
         // get and display threads
-        if (msg[ 0 ] === 'getThreads') {
-            const currBoard = msg[ 1 ];
+        if (msg[0] === 'getThreads') {
+            const currBoard = msg[1];
             clients.set(ID, {
                 socket: ws,
                 board: currBoard,
@@ -209,15 +209,15 @@ ws.on('connection', function connection(ws, req) {
                 return;
             }
 
-            if (msg[ 0 ] in cmd) {
-                const funct = cmd[ msg[ 0 ] ];
+            if (msg[0] in cmd) {
+                const funct = cmd[msg[0]];
                 funct(ID, currBoard);
             }
         }
         // get and display posts within a thread
-        if (msg[ 0 ] === 'getMessages') {
-            const currBoard = msg[ 1 ];
-            const threadID = msg[ 2 ];
+        if (msg[0] === 'getMessages') {
+            const currBoard = msg[1];
+            const threadID = msg[2];
 
             //update client states
             clients.set(ID, {
@@ -231,8 +231,8 @@ ws.on('connection', function connection(ws, req) {
                 return;
             }
 
-            if (msg[ 0 ] in cmd) {
-                const funct = cmd[ msg[ 0 ] ];
+            if (msg[0] in cmd) {
+                const funct = cmd[msg[0]];
                 funct(ID, currBoard, threadID);
             }
         }
@@ -249,7 +249,7 @@ ws.on('connection', function connection(ws, req) {
                 boardNum = 0;
             }
 
-            console.log(`${ boardNum }:${ threadID } to ${ ID }.`);
+            console.log(`${boardNum}:${threadID} to ${ID}.`);
             clients.get(ID).board = boardNum;
             database
                 .collection('posts')
@@ -260,9 +260,9 @@ ws.on('connection', function connection(ws, req) {
                     },
                 )
                 .limit(400)
-                .toArray(function(err, docs) {
+                .toArray(function (err, docs) {
                     assert.strictEqual(err, null);
-                    console.log(`${ ID } requested contents of ${ threadID }`);
+                    console.log(`${ID} requested contents of ${threadID}`);
                     ws.send(
                         JSON.stringify(
                             {
@@ -283,7 +283,7 @@ ws.on('connection', function connection(ws, req) {
                 boardNum = 0;
             }
 
-            console.log(`Board ${ boardNum } to ${ ID }.`);
+            console.log(`Board ${boardNum} to ${ID}.`);
             clients.get(ID).board = boardNum;
             database
                 .collection('threads')
@@ -298,7 +298,7 @@ ws.on('connection', function connection(ws, req) {
                     },
                 )
                 .limit(400)
-                .toArray(function(err, docs) {
+                .toArray(function (err, docs) {
                     assert.strictEqual(err, null);
                     wsBroadcastBoard(
                         JSON.stringify(
@@ -351,7 +351,7 @@ ws.on('connection', function connection(ws, req) {
                 )
                 .toArray((err, docs) => {
                     assert.strictEqual(err, null);
-                    const postID = docs[ 0 ] ? docs[ 0 ].postID + 1 : 1;
+                    const postID = docs[0] ? docs[0].postID + 1 : 1;
                     const messageObj = {
                         board: boardNum,
                         nick: username,
@@ -374,7 +374,7 @@ ws.on('connection', function connection(ws, req) {
                         )
                         .then(() => posts.insertOne(messageObj))
                         .then(() => {
-                            console.log(`completed message submission to #${ threadID } time to broadcast`);
+                            console.log(`completed message submission to #${threadID} time to broadcast`);
                             wsBroadcastThread(
                                 JSON.stringify(
                                     {
@@ -456,7 +456,7 @@ ws.on('connection', function connection(ws, req) {
                                 )
                                 .toArray((err, docs) => {
                                     assert.strictEqual(err, null);
-                                    const postID = docs[ 0 ] ? docs[ 0 ].postID + 1 : 1;
+                                    const postID = docs[0] ? docs[0].postID + 1 : 1;
                                     const messageObj = {
                                         board: boardNum,
                                         nick: username,
@@ -484,7 +484,7 @@ ws.on('connection', function connection(ws, req) {
 
 //broadcast only to users on a certain board
 function wsBroadcastBoard(data, boardNum) {
-    clients.forEach(function(client) {
+    clients.forEach(function (client) {
         if (client.socket.readyState !== 1) {
             return;
         }
@@ -497,7 +497,7 @@ function wsBroadcastBoard(data, boardNum) {
 
 //broadcast only to users in a certain thread
 function wsBroadcastThread(data, threadID) {
-    clients.forEach(function(client) {
+    clients.forEach(function (client) {
         if (client.socket.readyState !== 1) {
             return;
         }
@@ -510,7 +510,7 @@ function wsBroadcastThread(data, threadID) {
 
 //broadcast only to a specific user
 function wsBroadcastUser(ID, data) {
-    clients.forEach(function(client) {
+    clients.forEach(function (client) {
         if (client.socket.readyState !== 1) {
             return;
         }
@@ -532,14 +532,14 @@ function wsAlert(ID, alertStr) {
 }
 
 function clearThrottles(IP) {
-    setTimeout(function() {
+    setTimeout(function () {
         throttledUsers.delete(IP);
         console.log(throttledUsers);
     }, 1000);
 }
 
 function clearThrottles2(IP) {
-    setTimeout(function() {
+    setTimeout(function () {
         throttledUsers2.delete(IP);
         console.log(throttledUsers2);
     }, 1000000);

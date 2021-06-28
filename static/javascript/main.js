@@ -35,7 +35,7 @@ const MESSAGE_TEMPLATE = `
 //client commands
 window.cmd = {
     domMessages: (messages) => {
-        window.thread = String(messages[ 0 ].threadID);
+        window.thread = String(messages[0].threadID);
 
         if (window.thread === '0') {
             return;
@@ -114,11 +114,11 @@ window.cmd = {
     },
 
     getThreads: (board) => {
-        socket.send([ `getThreads`, board ]);
+        socket.send([`getThreads`, board]);
     },
 
     getMessages: (board, threadID) => {
-        socket.send([ `getMessages`, board, threadID ]);
+        socket.send([`getMessages`, board, threadID]);
     },
 
     displayThreads: (msg) => {
@@ -140,7 +140,7 @@ window.cmd = {
 
     getUsers: (num) => {
         if (num > 0) {
-            boardDom.innerHTML = `Users online: ${ num }`;
+            boardDom.innerHTML = `Users online: ${num}`;
         }
     },
 };
@@ -148,7 +148,7 @@ window.cmd = {
 //set connection status in DOM
 window.boardSet = (board) => {
     if (retries > 0) {
-        boardDom.innerHTML = `<p>Connecting/Reconnecting... (${ retries })</p>`;
+        boardDom.innerHTML = `<p>Connecting/Reconnecting... (${retries})</p>`;
     } else {
         boardDom.innerHTML = `<p>Connecting/Reconnecting...</p>`;
     }
@@ -161,7 +161,7 @@ window.emitThread = (board) => {
 
     const nick = document.getElementById('threadName').value;
     const message = document.getElementById('threadMessage').value;
-    socket.send([ 'submitThread', board, nick, message ]);
+    socket.send(['submitThread', board, nick, message]);
     clearInput1();
     threadFrm();
 };
@@ -173,7 +173,7 @@ window.emitPost = (board, thread) => {
 
     const message = document.getElementById('messageVal').value;
     const nick = document.getElementById('messageName').value;
-    socket.send([ 'submitMessage', board, thread, nick, message ]);
+    socket.send(['submitMessage', board, thread, nick, message]);
     clearInput2();
     scrollDown();
     messageFrm();
@@ -208,22 +208,22 @@ window.clearInput2 = () => {
 //lines for initialization
 window.init = () => {
     retries = retries + 1;
-    socket = new WebSocket(`ws://${ location.host }`);
+    socket = new WebSocket(`ws://${location.host}`);
 
     // Log errors to the console for debugging.
-    socket.onerror = function(error) {
+    socket.onerror = function (error) {
         console.log(error);
     };
 
     // Reconnect upon disconnect.
-    socket.onclose = function() {
+    socket.onclose = function () {
         console.log(`Your socket has been disconnected. Attempting to reconnect...`);
-        setTimeout(function() {
+        setTimeout(function () {
             init();
         }, 1000);
     };
 
-    socket.onmessage = function(message) {
+    socket.onmessage = function (message) {
         const parsedData = JSON.parse(message.data);
 
         if (parsedData.alert) {
@@ -232,20 +232,20 @@ window.init = () => {
         }
 
         if (!parsedData.command) {
-            console.log(`Error! ${ parsedData }`);
+            console.log(`Error! ${parsedData}`);
             return;
         }
 
         const fnName = parsedData.command;
         const arg = parsedData.argument || null;
-        const fn = window.cmd[ fnName ];
+        const fn = window.cmd[fnName];
 
         if (fn) {
             fn(arg);
         }
     };
 
-    socket.onopen = function() {
+    socket.onopen = function () {
         retries = -1;
         console.log('client connected successfully');
         if (String(thread) === '0') {

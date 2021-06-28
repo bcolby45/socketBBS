@@ -6,8 +6,8 @@
 
 	<meta name="viewport" content="width=device-width, initial-scale=0.70">
 	<% files.css.forEach(function(html) { %>
-	<%- html %>
-	<% }) %>
+		<%- html %>
+			<% }) %>
 </head>
 
 <body>
@@ -17,23 +17,28 @@
 	<div id="currBoard" style="margin-right: auto;margin-left: auto;margin-top: 10px; text-align:center;">
 	</div>
 	<div class="flex center w-100">
-		<button id="return" class="btn" onClick="cmd.getThreads(0)">Back</button> <button id="threadBtn" class="btn hidden" onClick="threadFrm()">Start a Thread</button>
+		<button id="return" class="btn" onClick="cmd.getThreads(0)">Back</button> <button id="threadBtn"
+			class="btn hidden" onClick="threadFrm()">Start a Thread</button>
 		<button id="messageBtn" class="btn hidden" onClick="messageFrm()">Reply to Thread</button>
 	</div>
 	<div class="flex center w-100" style=" margin-top:10px;">
 		<div id="threadSubmit" class="hidden" style="margin-bottom:10px; max-width:90%;">
 			<input id="threadName" class="input-c" type="text" value="" placeholder="Enter a name." />
-			<textarea id="threadMessage" class="input-c" value="" placeholder="Enter a message." style="height:200px;" name="thread_message"></textarea>
+			<textarea id="threadMessage" class="input-c" value="" placeholder="Enter a message." style="height:200px;"
+				name="thread_message"></textarea>
 			<div class="flex center" style="margin-top:7.5px;">
-				<button class="btn" onClick="emitThread(0)" style="margin-right:7.5px;">Submit</button> <button class="btn" onClick="threadFrm()" style="margin-right:7.5px;">Close</button>
+				<button class="btn" onClick="emitThread(0)" style="margin-right:7.5px;">Submit</button> <button
+					class="btn" onClick="threadFrm()" style="margin-right:7.5px;">Close</button>
 			</div>
 		</div>
 
 		<div id="messageSubmit" class="hidden" style="margin-bottom:10px; max-width:90%;">
 			<input id="messageName" class="input-c" type="text" value="" placeholder="Enter a name." />
-			<textarea id="messageVal" class="input-c" value="" placeholder="Enter a message." style="height:200px;" name="message"></textarea>
+			<textarea id="messageVal" class="input-c" value="" placeholder="Enter a message." style="height:200px;"
+				name="message"></textarea>
 			<div class="flex center" style="margin-top:7.5px;">
-				<button class="btn" onClick="emitPost(0, thread)" style="margin-right:7.5px;">Submit</button> <button class="btn" onClick="messageFrm()" style="margin-right:7.5px;">Close</button>
+				<button class="btn" onClick="emitPost(0, thread)" style="margin-right:7.5px;">Submit</button> <button
+					class="btn" onClick="messageFrm()" style="margin-right:7.5px;">Close</button>
 			</div>
 		</div>
 
@@ -46,8 +51,8 @@
 
 	<script>window.imrcvSrc = "<%= assetUri('static/assets/imrcv.wav') %>"</script>
 	<% files.js.forEach(function(html) { %>
-	<%- html %>
-	<% }) %>
+		<%- html %>
+			<% }) %>
 </body>
 
 
